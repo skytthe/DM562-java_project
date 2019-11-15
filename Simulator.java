@@ -147,24 +147,22 @@ public class Simulator {
 	public static City[] reversion(City[] path) {
 		City[] mutation = path.clone();
 		int len = path.length;
-		//pick two cities at random, which can't be the same or result in an equivalent path
-		int city1 = 0, city2 = 0;
-		while (city1 == city2 || (Math.floorMod((city2 - city1), len) >= (len - 2))) {
-			city1 = RandomUtils.getRandomValue(len);
-			city2 = RandomUtils.getRandomValue(len);
-		}
+		//pick segment of cities to reverse
+		int segmentStart = RandomUtils.getRandomValue(len);
+		int segmentLen = RandomUtils.getRandomValue(len - 3) + 2;
 
-		// reverse segment between city1 and city2
-		for (int i = 0; i < (Math.floorMod((city2 - city1), len) + 1); i++) {
-			mutation[(city1 + i) % len] = path[Math.floorMod((city2 - i), len)];
+		// reverse segment of cities
+		int index = segmentStart + segmentLen - 1; // pre-calculate to reduce calculations in loop
+		for (int i = 0; i < segmentLen; i++) {
+			mutation[(segmentStart + i) % len] = path[Math.floorMod((index - i), len)];
 		}
 
 		return mutation;
 	}
 
 	/**
-	 * A segment between two randomly chosen cities in the current path is moved
-	 * to another place in the path.
+	 * A segment between two randomly chosen cities in the current path is moved to another place in
+	 * the path.
 	 *
 	 * @param path
 	 * @return City[]
@@ -219,10 +217,6 @@ public class Simulator {
 		}
 		s += "cost: " + cost(cities);
 		return s;
-	}
-
-	public City[] getCurrentPath() {
-		return currentPath;
 	}
 
 	@Override
